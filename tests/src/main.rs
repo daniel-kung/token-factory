@@ -27,7 +27,7 @@ use std::env;
 use std::str::FromStr;
 use token_factory::{instruction::*, state::*, utils::*};
 
-const PROGRAM_ID: &str = "BCCBkgbofwLpBuJgfKzuUtxBSPxvxTMq6dqBeXzQ1vG7";
+const PROGRAM_ID: &str = "CJjdBvJv6mC7czvpr5d7vZ6oAmmMKuAL48q7ebbfsx2M";
 const METADATA_PROGRAM: &str = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
 
 fn config_dev(mint_pubkey: &Pubkey) {
@@ -42,6 +42,10 @@ fn config_dev(mint_pubkey: &Pubkey) {
     let seeds = &[program_id.as_ref(), "config".as_bytes(), "1".as_bytes()];
     let (config_info, _) = Pubkey::find_program_address(seeds, &program_id);
     println!(" config_info::::::{:?}", config_info.to_string());
+
+    let seeds = &[program_id.as_ref(), "round".as_bytes()];
+    let (round_info, _) = Pubkey::find_program_address(seeds, &program_id);
+    println!(" round_info::::::{:?}", round_info.to_string());
 
     let seeds = &[
         program_id.as_ref(),
@@ -65,7 +69,7 @@ fn config_dev(mint_pubkey: &Pubkey) {
         authority: auth,
         charge_addr: auth,
         round: 1.to_string(),
-        start_time: now_timestamp(),
+        start_time: 1704181500,
         total_reward: 100000000000000,
     };
 
@@ -74,6 +78,7 @@ fn config_dev(mint_pubkey: &Pubkey) {
             &program_id,
             &signer_pubkey,
             &config_info,
+            &round_info,
             mint_pubkey,
             &mint_vault,
             &transfer_auth,
@@ -148,6 +153,10 @@ fn close_dev() {
     let auth = signer.pubkey();
     let signer_pubkey = signer.pubkey();
 
+    let seeds = &[program_id.as_ref(), "round".as_bytes()];
+    let (round_info, _) = Pubkey::find_program_address(seeds, &program_id);
+    println!(" round_info::::::{:?}", round_info.to_string());
+
     let seeds = &[program_id.as_ref(), "config".as_bytes(), "1".as_bytes()];
     let (config_info, _) = Pubkey::find_program_address(seeds, &program_id);
     println!(" config_info::::::{:?}", config_info.to_string());
@@ -164,6 +173,7 @@ fn close_dev() {
             &program_id,
             &signer_pubkey,
             &config_info,
+            &round_info,
             &new_config_info,
         )
         .unwrap(),
@@ -195,7 +205,8 @@ fn claim_dev(mint_pubkey: &Pubkey) {
     let claimargs = ClaimArgs {
         round:1
     };
-    let seeds = &[program_id.as_ref(), signer_pubkey.as_ref(), "user_info".as_bytes(), claimargs.round.to_string().as_bytes()];
+    let round = claimargs.round.to_string();
+    let seeds = &[program_id.as_ref(), signer_pubkey.as_ref(), "user_info".as_bytes(), round.as_bytes()];
     let (user_info, _) = Pubkey::find_program_address(seeds, &program_id);
     println!(" user_info::::::{:?}", user_info.to_string());
 
@@ -317,13 +328,21 @@ fn clear_dev(mint_pubkey: &Pubkey) {
 
 
 fn main() {
-    // config_dev();
-    let token_info = Pubkey::from_str("56F6DzdZLJ1eVTkqxMoZYWfMDjpw7Y42xZZccKm7ziR").unwrap();
 
+    // let mint_pubkey = Pubkey::from_str("BNMjgfzampFZ2JL1qMBnQ8oZG5vwDUaXYkwJLWmrSJ6u").unwrap();
+    // config_dev(&mint_pubkey);
+
+    let round_info = Pubkey::from_str("8NLFvdo6ocuueUsXvs1Q4S8NzxRRm5Ge36JoFAVhdPVy").unwrap();
     let client = RpcClient::new("https://api.devnet.solana.com".to_string());
-    let account = client.get_account(&token_info).unwrap();
-    // let tokendata: TokenData = try_from_slice_unchecked(&account.data).unwrap();
-    // println!("tokendata:::{:?}", tokendata);
+    let account = client.get_account(&round_info).unwrap();
+    let roundata: RoundData = try_from_slice_unchecked(&account.data).unwrap();
+    println!("roundata:::{:?}", roundata);
+
+    let config_info = Pubkey::from_str("BSQw1nQSWhKKm3LBJ8GAT3kuv118D1oWdEgD8M321u5w").unwrap();
+    let client = RpcClient::new("https://api.devnet.solana.com".to_string());
+    let account = client.get_account(&config_info).unwrap();
+    let configdata: ConfigureData = try_from_slice_unchecked(&account.data).unwrap();
+    println!("configdata:::{:?}", configdata);
     
 
 }

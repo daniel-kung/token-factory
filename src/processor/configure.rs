@@ -119,6 +119,7 @@ pub fn process_configure(
     config_data.round = args.round.parse().unwrap();
     config_data.total_reward = args.total_reward;
     config_data.charge_addr = args.charge_addr;
+    config_data.token = mint_info.key.clone();
     config_data.serialize(&mut &mut config_info.data.borrow_mut()[..])?;
 
     round_data.round = args.round.parse().unwrap();
