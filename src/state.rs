@@ -79,7 +79,7 @@ impl UserData {
 }
 
 #[repr(C)]
-#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, PartialEq)]
+#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Default, PartialEq)]
 pub struct BuyTicketsArgs {
     pub shot: Option<[u8;6]>,
     pub num: u64
@@ -95,5 +95,22 @@ pub struct ClaimArgs {
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, PartialEq)]
 pub struct ClearArgs {
     pub amt: u64
+}
+
+#[repr(C)]
+#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Default, PartialEq)]
+pub struct RoundData {
+    pub round: u64,
+}
+
+impl RoundData {
+    pub const LEN: usize = 8;
+
+    pub fn from_account_info(a: &AccountInfo) -> Result<RoundData, ProgramError> {
+        if a.data_len() != Self::LEN {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        try_from_slice_unchecked(&a.data.borrow_mut()).map_err(|_| ProgramError::InvalidAccountData)
+    }
 }
 

@@ -20,6 +20,7 @@ pub fn process_configure(
     let account_info_iter = &mut accounts.iter();
     let signer_info = next_account_info(account_info_iter)?;
     let config_info = next_account_info(account_info_iter)?;
+    let round_info = next_account_info(account_info_iter)?;
     let mint_info = next_account_info(account_info_iter)?;
     let mint_vault = next_account_info(account_info_iter)?;
     let transfer_auth = next_account_info(account_info_iter)?;
@@ -31,6 +32,13 @@ pub fn process_configure(
     assert_eq_pubkey(&system_info, &solana_program::system_program::id())?;
     assert_signer(&signer_info)?;
     let bump = assert_config(&program_id, &config_info, args.round.clone())?;
+
+    let round_bump = assert_round(program_id, round_info)?;
+    let round_seed = [
+        program_id.as_ref(),
+        "round".as_bytes(),
+        &[round_bump],
+    ];
     let mint_vault_bump = assert_mint_vault(program_id, mint_info, mint_vault)?;
     let mint_vault_seed = [
         program_id.as_ref(),
@@ -75,6 +83,22 @@ pub fn process_configure(
         is_created = false;
     }
 
+    if round_info.data_is_empty() {
+        create_or_allocate_account_raw(
+            *program_id,
+            round_info,
+            rent_info,
+            system_info,
+            signer_info,
+            RoundData::LEN,
+            &[
+                program_id.as_ref(),
+                "round".as_bytes(),
+                &[round_bump],
+            ],
+        )?;
+    }
+    let mut round_data = RoundData::from_account_info(round_info)?;
     let mut config_data = ConfigureData::from_account_info(config_info)?;
 
     if is_created {
@@ -96,6 +120,9 @@ pub fn process_configure(
     config_data.total_reward = args.total_reward;
     config_data.charge_addr = args.charge_addr;
     config_data.serialize(&mut &mut config_info.data.borrow_mut()[..])?;
+
+    round_data.round = args.round.parse().unwrap();
+    round_data.serialize(&mut &mut round_info.data.borrow_mut()[..])?;
 
     Ok(())
 }

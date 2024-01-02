@@ -23,6 +23,7 @@ pub fn configure(
     program_id: &Pubkey,
     siger: &Pubkey,
     config_info: &Pubkey,
+    round_info: &Pubkey,
     mint_info: &Pubkey,
     mint_vault: &Pubkey,
     transfer_auth: &Pubkey,
@@ -31,6 +32,7 @@ pub fn configure(
     let accounts = vec![
         AccountMeta::new(*siger, true),
         AccountMeta::new(*config_info, false),
+        AccountMeta::new(*round_info, false),
         AccountMeta::new(*mint_info, false),
         AccountMeta::new(*mint_vault, false),
         AccountMeta::new(*transfer_auth, false),
@@ -74,11 +76,13 @@ pub fn close(
     program_id: &Pubkey,
     siger: &Pubkey,
     config_info: &Pubkey,
+    round_info: &Pubkey,
     new_config_info: &Pubkey,
 ) -> Result<Instruction, ProgramError> {
     let accounts = vec![
         AccountMeta::new(*siger, true),
         AccountMeta::new(*config_info, false),
+        AccountMeta::new(*round_info, false),
         AccountMeta::new(*new_config_info, false),
         AccountMeta::new_readonly(rent::id(), false),
         AccountMeta::new_readonly(system_program::id(), false),

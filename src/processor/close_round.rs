@@ -15,6 +15,7 @@ pub fn process_close(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
     let account_info_iter = &mut accounts.iter();
     let signer_info = next_account_info(account_info_iter)?;
     let config_info = next_account_info(account_info_iter)?;
+    let round_info = next_account_info(account_info_iter)?;
     let new_config_info = next_account_info(account_info_iter)?;
     let rent_info = next_account_info(account_info_iter)?;
     let system_info = next_account_info(account_info_iter)?;
@@ -24,7 +25,7 @@ pub fn process_close(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
     let mut config_data = ConfigureData::from_account_info(config_info)?;
     assert_eq_pubkey(signer_info, &config_data.authority)?;
 
-
+    let mut round_data = RoundData::from_account_info(round_info)?;
     if config_data.authority != *signer_info.key {
         return ferror!("invalid authority");
     }
@@ -86,6 +87,9 @@ pub fn process_close(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
     new_config_data.total_reward = config_data.total_reward;
     new_config_data.charge_addr = config_data.charge_addr;
     new_config_data.serialize(&mut &mut new_config_info.data.borrow_mut()[..])?;
+
+    round_data.round += 1;
+    round_data.serialize(&mut &mut round_info.data.borrow_mut()[..])?;
 
     Ok(())
 }

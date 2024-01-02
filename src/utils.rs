@@ -75,6 +75,11 @@ pub fn assert_config(program_id: &Pubkey, account: &AccountInfo, round: String) 
     assert_derivation(&program_id, &account, path)
 }
 
+pub fn assert_round(program_id: &Pubkey, account: &AccountInfo) -> Result<u8, ProgramError> {
+    let path = &[program_id.as_ref(), "round".as_bytes()];
+    assert_derivation(&program_id, &account, path)
+}
+
 pub fn assert_token_info(program_id: &Pubkey,new_mint: &Pubkey, account: &AccountInfo) -> Result<u8, ProgramError> {
     let path = &[program_id.as_ref(), new_mint.as_ref(), "token_info".as_bytes()];
     assert_derivation(&program_id, &account, path)
