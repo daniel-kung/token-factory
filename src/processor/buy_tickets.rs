@@ -92,45 +92,45 @@ pub fn process_buy(
         shot = args.shot.unwrap();
     }
 
-    let target_array: [u8; 6] = [
-            ((config_data.target / 100000) % 10) as u8,
-            ((config_data.target / 10000) % 10) as u8,
-            ((config_data.target / 1000) % 10) as u8,
-            ((config_data.target / 100) % 10) as u8,
-            ((config_data.target / 10) % 10) as u8,
-            (config_data.target % 10) as u8,
-        ];
+    // let target_array: [u8; 6] = [
+    //         ((config_data.target / 100000) % 10) as u8,
+    //         ((config_data.target / 10000) % 10) as u8,
+    //         ((config_data.target / 1000) % 10) as u8,
+    //         ((config_data.target / 100) % 10) as u8,
+    //         ((config_data.target / 10) % 10) as u8,
+    //         (config_data.target % 10) as u8,
+    //     ];
 
-    let matched = count_matching_elements_until_difference(&shot, &target_array) as u8;
+    // let matched = count_matching_elements_until_difference(&shot, &target_array) as u8;
     
-    match matched {
-        1 => {
-            user_data.match1 += args.num;
-            config_data.match1 += args.num;
-        }
-        2 => {
-            user_data.match2 += args.num;
-            config_data.match2 += args.num;
-        }
-        3 => {
-            user_data.match3 += args.num;
-            config_data.match3 += args.num;
-        }
-        4 => {
-            user_data.match4 += args.num;
-            config_data.match4 += args.num;
-        }
-        5 => {
-            user_data.match5 += args.num;
-            config_data.match5 += args.num;
-        }
-        6 => {
-            user_data.match6 += args.num;
-            config_data.match6 += args.num;
-        }
+    // match matched {
+    //     1 => {
+    //         user_data.match1 += args.num;
+    //         config_data.match1 += args.num;
+    //     }
+    //     2 => {
+    //         user_data.match2 += args.num;
+    //         config_data.match2 += args.num;
+    //     }
+    //     3 => {
+    //         user_data.match3 += args.num;
+    //         config_data.match3 += args.num;
+    //     }
+    //     4 => {
+    //         user_data.match4 += args.num;
+    //         config_data.match4 += args.num;
+    //     }
+    //     5 => {
+    //         user_data.match5 += args.num;
+    //         config_data.match5 += args.num;
+    //     }
+    //     6 => {
+    //         user_data.match6 += args.num;
+    //         config_data.match6 += args.num;
+    //     }
 
-        _ => {}
-    }
+    //     _ => {}
+    // }
 
     user_data.round = config_data.round;
     user_data.total_shots += args.num;

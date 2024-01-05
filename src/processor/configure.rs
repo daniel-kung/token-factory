@@ -108,12 +108,7 @@ pub fn process_configure(
         assert_owned_by(config_info, &program_id)?;
     }
 
-    let hash = hashv(&[&now_timestamp().to_be_bytes().as_slice(), &program_id.as_ref()]);
-    let kep_bytes = hash.to_bytes();
-    let bts = array_ref![kep_bytes, 0, 16];
-    let num = u128::from_be_bytes(*bts);
-    let fnum = (num % 1000000) as u64;
-    config_data.target = fnum;
+    
     config_data.authority = args.authority;
     config_data.start_time = args.start_time;
     config_data.round = args.round.parse().unwrap();

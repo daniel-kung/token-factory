@@ -329,7 +329,7 @@ fn clear_dev(mint_pubkey: &Pubkey) {
 
 fn main() {
 
-    // let mint_pubkey = Pubkey::from_str("BNMjgfzampFZ2JL1qMBnQ8oZG5vwDUaXYkwJLWmrSJ6u").unwrap();
+    let mint_pubkey = Pubkey::from_str("BNMjgfzampFZ2JL1qMBnQ8oZG5vwDUaXYkwJLWmrSJ6u").unwrap();
     // config_dev(&mint_pubkey);
 
     let round_info = Pubkey::from_str("8NLFvdo6ocuueUsXvs1Q4S8NzxRRm5Ge36JoFAVhdPVy").unwrap();
@@ -339,10 +339,15 @@ fn main() {
     println!("roundata:::{:?}", roundata);
 
     let config_info = Pubkey::from_str("BSQw1nQSWhKKm3LBJ8GAT3kuv118D1oWdEgD8M321u5w").unwrap();
-    let client = RpcClient::new("https://api.devnet.solana.com".to_string());
     let account = client.get_account(&config_info).unwrap();
     let configdata: ConfigureData = try_from_slice_unchecked(&account.data).unwrap();
     println!("configdata:::{:?}", configdata);
     
+    // buy_dev();
 
+    let user_info = Pubkey::from_str("C6N6XTgHNuxXuZE4FekvktWStRhXMdFeiczcBFFa1bjC").unwrap();
+    let account = client.get_account(&user_info).unwrap();
+    let userdata: UserData = try_from_slice_unchecked(&account.data).unwrap();
+    println!("userdata:::{:?}", userdata);
+    close_dev();
 }
