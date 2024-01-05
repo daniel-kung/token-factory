@@ -10,6 +10,7 @@ use solana_program::{
     program_error::ProgramError,
     program_pack::Pack,
     pubkey::Pubkey,
+    keccak::hashv,
     system_program,
     sysvar::{clock::Clock, rent, Sysvar},
 };
@@ -27,7 +28,7 @@ use std::env;
 use std::str::FromStr;
 use token_factory::{instruction::*, state::*, utils::*};
 
-const PROGRAM_ID: &str = "7LuJxW9GtuCjD8TWYbNwirofa39bY5WXaqhc5MCxNZyM";
+const PROGRAM_ID: &str = "6Ey258ikoyE51zsD83LnuUX6ModvsSpHN4VqkmhwQBaj";
 const METADATA_PROGRAM: &str = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
 
 fn config_dev(mint_pubkey: &Pubkey) {
@@ -157,11 +158,11 @@ fn close_dev() {
     let (round_info, _) = Pubkey::find_program_address(seeds, &program_id);
     println!(" round_info::::::{:?}", round_info.to_string());
 
-    let seeds = &[program_id.as_ref(), "config".as_bytes(), "1".as_bytes()];
+    let seeds = &[program_id.as_ref(), "config".as_bytes(), "2".as_bytes()];
     let (config_info, _) = Pubkey::find_program_address(seeds, &program_id);
     println!(" config_info::::::{:?}", config_info.to_string());
 
-    let seeds = &[program_id.as_ref(), "config".as_bytes(), "2".as_bytes()];
+    let seeds = &[program_id.as_ref(), "config".as_bytes(), "3".as_bytes()];
     let (new_config_info, _) = Pubkey::find_program_address(seeds, &program_id);
     println!(" new_config_info::::::{:?}", new_config_info.to_string());
 
@@ -325,29 +326,45 @@ fn clear_dev(mint_pubkey: &Pubkey) {
 
     println!("signature:::{:?}", &signature);
 }
-
+pub fn merkle_proof_verify(proof: Vec<[u8; 32]>, root: [u8; 32], leaf: [u8; 32]) -> bool {
+    let mut computed_hash = leaf;
+    for proof_element in proof.into_iter() {
+        if computed_hash <= proof_element {
+            // Hash(current computed hash + current element of the proof)
+            computed_hash = solana_program::keccak::hashv(&[&computed_hash, &proof_element]).0;
+        } else {
+            // Hash(current element of the proof + current computed hash)
+            computed_hash = solana_program::keccak::hashv(&[&proof_element, &computed_hash]).0;
+        }
+    }
+    // Check if the computed hash (root) is equal to the provided root
+    computed_hash == root
+}
 
 fn main() {
 
     let mint_pubkey = Pubkey::from_str("BNMjgfzampFZ2JL1qMBnQ8oZG5vwDUaXYkwJLWmrSJ6u").unwrap();
     // config_dev(&mint_pubkey);
 
-    let round_info = Pubkey::from_str("FZRTqE43PQPPgXUuuoL63ABBc7QsX7GzHJeD8ehZ7QyP").unwrap();
+    let round_info = Pubkey::from_str("3A6fzDs3kC1eU8ahbC9VLqpMf944bVk53tCPy9oK7bDi").unwrap();
     let client = RpcClient::new("https://api.devnet.solana.com".to_string());
     let account = client.get_account(&round_info).unwrap();
     let roundata: RoundData = try_from_slice_unchecked(&account.data).unwrap();
-    println!("roundata:::{:?}", roundata);
+    // println!("roundata:::{:?}", roundata);
 
-    let config_info = Pubkey::from_str("4joUbwuwYcYZy4vSQU9P9bAqqDjNjSD8sZG1SkL59e2u").unwrap();
+    let config_info = Pubkey::from_str("4QaH4xyoS1JpDKXeSqdvNrfjowohvjE3REGBnHLFQbkx").unwrap();
     let account = client.get_account(&config_info).unwrap();
     let configdata: ConfigureData = try_from_slice_unchecked(&account.data).unwrap();
-    println!("configdata:::{:?}", configdata);
+    // println!("configdata:::{:?}", configdata);
     
     // buy_dev();
 
     let user_info = Pubkey::from_str("C6N6XTgHNuxXuZE4FekvktWStRhXMdFeiczcBFFa1bjC").unwrap();
     let account = client.get_account(&user_info).unwrap();
     let userdata: UserData = try_from_slice_unchecked(&account.data).unwrap();
-    println!("userdata:::{:?}", userdata);
+    // println!("userdata:::{:?}", userdata);
     // close_dev();
+    // claim_dev(&mint_pubkey);
+    
+
 }

@@ -81,7 +81,7 @@ pub fn process_close(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
     let num = u128::from_be_bytes(*bts);
     let fnum = (num % 1000000) as u64;
     
-    config_data.target = fnum;
+    new_config_data.target = fnum;
     config_data.serialize(&mut &mut config_info.data.borrow_mut()[..])?;
 
     new_config_data.authority = config_data.authority;

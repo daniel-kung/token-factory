@@ -81,7 +81,6 @@ impl UserData {
 #[repr(C)]
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Default, PartialEq)]
 pub struct BuyTicketsArgs {
-    pub shot: Option<[u8;6]>,
     pub num: u64
 }
 

@@ -68,69 +68,65 @@ pub fn process_buy(
         ],
     )?;
     let shot: [u8; 6];
-    if args.shot == None {
-        let hash = hashv(&[
-            &now_timestamp().to_be_bytes().as_slice(),
-            &signer_info.key.as_ref(),
-        ]);
-        let kep_bytes = hash.to_bytes();
-        let bts = array_ref![kep_bytes, 0, 16];
-        let num = u128::from_be_bytes(*bts);
-        let fnum = (num % 1000000) as u64;
-        let array_u8: [u8; 6] = [
-            ((fnum / 100000) % 10) as u8,
-            ((fnum / 10000) % 10) as u8,
-            ((fnum / 1000) % 10) as u8,
-            ((fnum / 100) % 10) as u8,
-            ((fnum / 10) % 10) as u8,
-            (fnum % 10) as u8,
-        ];
-        shot = array_u8;
-        user_data.shots.insert(array_u8, args.num);
-    } else {
-        user_data.shots.insert(args.shot.unwrap(), args.num);
-        shot = args.shot.unwrap();
+
+    let hash = hashv(&[
+        &now_timestamp().to_be_bytes().as_slice(),
+        &signer_info.key.as_ref(),
+    ]);
+    let kep_bytes = hash.to_bytes();
+    let bts = array_ref![kep_bytes, 0, 16];
+    let num = u128::from_be_bytes(*bts);
+    let fnum = (num % 1000000) as u64;
+    let array_u8: [u8; 6] = [
+        ((fnum / 100000) % 10) as u8,
+        ((fnum / 10000) % 10) as u8,
+        ((fnum / 1000) % 10) as u8,
+        ((fnum / 100) % 10) as u8,
+        ((fnum / 10) % 10) as u8,
+        (fnum % 10) as u8,
+    ];
+    shot = array_u8;
+    user_data.shots.insert(array_u8, args.num);
+
+    let target_array: [u8; 6] = [
+        ((config_data.target / 100000) % 10) as u8,
+        ((config_data.target / 10000) % 10) as u8,
+        ((config_data.target / 1000) % 10) as u8,
+        ((config_data.target / 100) % 10) as u8,
+        ((config_data.target / 10) % 10) as u8,
+        (config_data.target % 10) as u8,
+    ];
+
+    let matched = count_matching_elements_until_difference(&shot, &target_array) as u8;
+
+    match matched {
+        1 => {
+            user_data.match1 += args.num;
+            config_data.match1 += args.num;
+        }
+        2 => {
+            user_data.match2 += args.num;
+            config_data.match2 += args.num;
+        }
+        3 => {
+            user_data.match3 += args.num;
+            config_data.match3 += args.num;
+        }
+        4 => {
+            user_data.match4 += args.num;
+            config_data.match4 += args.num;
+        }
+        5 => {
+            user_data.match5 += args.num;
+            config_data.match5 += args.num;
+        }
+        6 => {
+            user_data.match6 += args.num;
+            config_data.match6 += args.num;
+        }
+
+        _ => {}
     }
-
-    // let target_array: [u8; 6] = [
-    //         ((config_data.target / 100000) % 10) as u8,
-    //         ((config_data.target / 10000) % 10) as u8,
-    //         ((config_data.target / 1000) % 10) as u8,
-    //         ((config_data.target / 100) % 10) as u8,
-    //         ((config_data.target / 10) % 10) as u8,
-    //         (config_data.target % 10) as u8,
-    //     ];
-
-    // let matched = count_matching_elements_until_difference(&shot, &target_array) as u8;
-    
-    // match matched {
-    //     1 => {
-    //         user_data.match1 += args.num;
-    //         config_data.match1 += args.num;
-    //     }
-    //     2 => {
-    //         user_data.match2 += args.num;
-    //         config_data.match2 += args.num;
-    //     }
-    //     3 => {
-    //         user_data.match3 += args.num;
-    //         config_data.match3 += args.num;
-    //     }
-    //     4 => {
-    //         user_data.match4 += args.num;
-    //         config_data.match4 += args.num;
-    //     }
-    //     5 => {
-    //         user_data.match5 += args.num;
-    //         config_data.match5 += args.num;
-    //     }
-    //     6 => {
-    //         user_data.match6 += args.num;
-    //         config_data.match6 += args.num;
-    //     }
-
-    //     _ => {}
-    // }
 
     user_data.round = config_data.round;
     user_data.total_shots += args.num;
