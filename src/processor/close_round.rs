@@ -71,7 +71,7 @@ pub fn process_close(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
     
     config_data.closed = true;
     config_data.allocated = total_allocated;
-    config_data.serialize(&mut &mut config_info.data.borrow_mut()[..])?;
+    
 
     let mut new_config_data = ConfigureData::from_account_info(config_info)?; 
 
@@ -80,7 +80,10 @@ pub fn process_close(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRe
     let bts = array_ref![kep_bytes, 0, 16];
     let num = u128::from_be_bytes(*bts);
     let fnum = (num % 1000000) as u64;
+    
     config_data.target = fnum;
+    config_data.serialize(&mut &mut config_info.data.borrow_mut()[..])?;
+
     new_config_data.authority = config_data.authority;
     new_config_data.start_time = now_timestamp();
     new_config_data.round = new_round;

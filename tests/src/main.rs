@@ -27,7 +27,7 @@ use std::env;
 use std::str::FromStr;
 use token_factory::{instruction::*, state::*, utils::*};
 
-const PROGRAM_ID: &str = "CJjdBvJv6mC7czvpr5d7vZ6oAmmMKuAL48q7ebbfsx2M";
+const PROGRAM_ID: &str = "7LuJxW9GtuCjD8TWYbNwirofa39bY5WXaqhc5MCxNZyM";
 const METADATA_PROGRAM: &str = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
 
 fn config_dev(mint_pubkey: &Pubkey) {
@@ -332,13 +332,13 @@ fn main() {
     let mint_pubkey = Pubkey::from_str("BNMjgfzampFZ2JL1qMBnQ8oZG5vwDUaXYkwJLWmrSJ6u").unwrap();
     // config_dev(&mint_pubkey);
 
-    let round_info = Pubkey::from_str("8NLFvdo6ocuueUsXvs1Q4S8NzxRRm5Ge36JoFAVhdPVy").unwrap();
+    let round_info = Pubkey::from_str("FZRTqE43PQPPgXUuuoL63ABBc7QsX7GzHJeD8ehZ7QyP").unwrap();
     let client = RpcClient::new("https://api.devnet.solana.com".to_string());
     let account = client.get_account(&round_info).unwrap();
     let roundata: RoundData = try_from_slice_unchecked(&account.data).unwrap();
     println!("roundata:::{:?}", roundata);
 
-    let config_info = Pubkey::from_str("BSQw1nQSWhKKm3LBJ8GAT3kuv118D1oWdEgD8M321u5w").unwrap();
+    let config_info = Pubkey::from_str("4joUbwuwYcYZy4vSQU9P9bAqqDjNjSD8sZG1SkL59e2u").unwrap();
     let account = client.get_account(&config_info).unwrap();
     let configdata: ConfigureData = try_from_slice_unchecked(&account.data).unwrap();
     println!("configdata:::{:?}", configdata);
@@ -349,5 +349,5 @@ fn main() {
     let account = client.get_account(&user_info).unwrap();
     let userdata: UserData = try_from_slice_unchecked(&account.data).unwrap();
     println!("userdata:::{:?}", userdata);
-    close_dev();
+    // close_dev();
 }
